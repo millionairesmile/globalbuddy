@@ -149,7 +149,6 @@ h2 {
   transition: all 0.3s ease;
 }
 
-/*
 .delete-button {
   padding: 8px 15px;
   background: #e74c3c;
@@ -160,6 +159,7 @@ h2 {
   font-size: 14px;
   transition: all 0.3s ease;
 }
+/*
 
 .delete-button:hover {
   background: #c0392b;
