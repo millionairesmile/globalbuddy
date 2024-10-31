@@ -9,6 +9,12 @@ import {
   remove,
   onValue,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 // Firebase 초기화
 const firebaseConfig = {
@@ -25,32 +31,33 @@ const firebaseConfig = {
 // Firebase 앱 초기화
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const storage = getStorage(app);
 const menusRef = ref(db, "menus");
 
 document.addEventListener("DOMContentLoaded", function () {
   const addButton = document.querySelector("#addButton");
   addButton.addEventListener("click", addMenu);
 
-  // Enter 키 입력 처리
-  const inputs = document.querySelectorAll(".input-area input");
-  inputs.forEach((input) => {
-    input.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        addMenu();
-      }
-    });
-  });
+  const imageInput = document.getElementById("imageUpload");
+  imageInput.addEventListener("change", uploadImage);
 
   // 실시간 데이터 동기화 설정
   onValue(menusRef, (snapshot) => {
     const menuList = document.getElementById("menuItems");
+    const gallery = document.getElementById("imageGallery");
     menuList.innerHTML = ""; // 기존 목록 초기화
+    gallery.innerHTML = ""; // 기존 이미지 초기화
 
     if (snapshot.exists()) {
       snapshot.forEach((childSnapshot) => {
         const key = childSnapshot.key;
         const data = childSnapshot.val();
         addMenuToList(data.name, data.menu, key);
+
+        // 이미지 URL이 있는 경우 갤러리에 추가
+        if (data.imageUrl) {
+          addImageToGallery(data.imageUrl);
+        }
       });
     }
   });
@@ -63,7 +70,6 @@ async function addMenu() {
   const name = nameInput.value.trim();
   const menu = menuInput.value.trim();
 
-  // 입력 유효성 검사
   if (!name || !menu) {
     alert("이름과 메뉴를 모두 입력해주세요.");
     return;
@@ -77,7 +83,6 @@ async function addMenu() {
       timestamp: Date.now(),
     });
 
-    // 입력 필드 초기화
     nameInput.value = "";
     menuInput.value = "";
     nameInput.focus();
@@ -87,65 +92,40 @@ async function addMenu() {
   }
 }
 
-// 메뉴 목록에 추가하는 함수
-function addMenuToList(name, menu, key) {
-  const menuList = document.getElementById("menuItems");
-  const listItem = document.createElement("li");
-  listItem.dataset.key = key;
+// 이미지 업로드 함수
+async function uploadImage(event) {
+  const file = event.target.files[0];
+  if (!file || !file.type.startsWith("image/")) {
+    alert("이미지 파일만 업로드할 수 있습니다.");
+    return;
+  }
 
-  const textSpan = document.createElement("span");
-  textSpan.textContent = `${name}: ${menu}`;
-  listItem.appendChild(textSpan);
+  const imageRef = storageRef(storage, `menuImages/${file.name}`);
+  try {
+    const snapshot = await uploadBytes(imageRef, file);
+    const imageUrl = await getDownloadURL(snapshot.ref);
 
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Delete";
-  deleteButton.classList.add("delete-button");
-  deleteButton.onclick = function () {
-    deleteMenu(key);
-  };
-
-  listItem.appendChild(deleteButton);
-  menuList.appendChild(listItem);
-}
-
-// 메뉴 삭제 함수
-function deleteMenu(menuKey) {
-  remove(ref(db, "menus/" + menuKey))
-    .then(() => {
-      console.log("메뉴가 삭제되었습니다.");
-    })
-    .catch((error) => {
-      console.error("메뉴 삭제 중 오류 발생:", error);
-      alert("메뉴 삭제 중 오류가 발생했습니다.");
+    // 업로드한 이미지 URL을 Realtime Database에 저장
+    const newMenuRef = push(menusRef);
+    await set(newMenuRef, {
+      imageUrl: imageUrl,
+      timestamp: Date.now(),
     });
+
+    alert("이미지가 성공적으로 업로드되었습니다.");
+  } catch (error) {
+    console.error("이미지 업로드 중 오류 발생:", error);
+    alert("이미지 업로드 중 오류가 발생했습니다.");
+  }
 }
 
-// 이미지 업로드 및 표시 관련 함수들
-window.fileInputHandler = function (event) {
-  const files = event.target.files;
-  displayImages(files);
-};
-
-window.dropHandler = function (event) {
-  event.preventDefault();
-  const files = event.dataTransfer.files;
-  displayImages(files);
-};
-
-window.dragOverHandler = function (event) {
-  event.preventDefault();
-};
-
-function displayImages(files) {
+// 갤러리에 이미지 추가 함수
+function addImageToGallery(url) {
   const gallery = document.getElementById("imageGallery");
-  Array.from(files).forEach((file) => {
-    if (file.type.startsWith("image/")) {
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.onclick = () => showFullscreenImage(img.src);
-      gallery.appendChild(img);
-    }
-  });
+  const img = document.createElement("img");
+  img.src = url;
+  img.onclick = () => showFullscreenImage(url);
+  gallery.appendChild(img);
 }
 
 function showFullscreenImage(src) {
@@ -173,34 +153,3 @@ function showFullscreenImage(src) {
     }
   };
 }
-
-// Clear 기능들을 전역 스코프에 추가
-window.clearMenu = function () {
-  const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234";
-  if (clearPassword === correctPassword) {
-    remove(menusRef)
-      .then(() => {
-        alert("목록이 초기화되었습니다.");
-        document.getElementById("clearPassword").value = "";
-      })
-      .catch((error) => {
-        console.error("목록 초기화 중 오류 발생:", error);
-        alert("목록 초기화 중 오류가 발생했습니다.");
-      });
-  } else {
-    alert("비밀번호가 올바르지 않습니다.");
-  }
-};
-
-window.clearImages = function () {
-  const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234";
-  if (clearPassword === correctPassword) {
-    document.getElementById("imageGallery").innerHTML = "";
-    alert("이미지가 모두 삭제되었습니다.");
-    document.getElementById("clearPassword").value = "";
-  } else {
-    alert("비밀번호가 올바르지 않습니다.");
-  }
-};
