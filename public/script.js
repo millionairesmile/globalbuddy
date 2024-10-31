@@ -265,6 +265,22 @@ async function addMenu() {
   }
 }
 
+// 메뉴 목록이 변경될 때마다 업데이트
+onValue(menusRef, (snapshot) => {
+  const menuList = document.getElementById("menuItems");
+  menuList.innerHTML = "";
+  let index = 1; // 순번을 위한 변수 초기화
+
+  if (snapshot.exists()) {
+    snapshot.forEach((childSnapshot) => {
+      const key = childSnapshot.key;
+      const data = childSnapshot.val();
+      addMenuToList(index, data.name, data.menu, key);
+      index++; // 순번 증가
+    });
+  }
+});
+
 function addMenuToList(index, name, menu, key) {
   const menuList = document.getElementById("menuItems");
   const listItem = document.createElement("li");
@@ -296,19 +312,3 @@ function deleteMenu(menuKey) {
       alert("메뉴 삭제 중 오류가 발생했습니다.");
     });
 }
-
-// 메뉴 목록이 변경될 때마다 업데이트
-onValue(menusRef, (snapshot) => {
-  const menuList = document.getElementById("menuItems");
-  menuList.innerHTML = "";
-  let index = 1; // 순번을 위한 변수 초기화
-
-  if (snapshot.exists()) {
-    snapshot.forEach((childSnapshot) => {
-      const key = childSnapshot.key;
-      const data = childSnapshot.val();
-      addMenuToList(index, data.name, data.menu, key);
-      index++; // 순번 증가
-    });
-  }
-});
