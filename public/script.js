@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // 메뉴 추가 함수
-function addMenu() {
+async function addMenu() {
   const nameInput = document.getElementById("name");
   const menuInput = document.getElementById("menu");
   const name = nameInput.value.trim();
@@ -56,17 +56,17 @@ function addMenu() {
   }
 
   try {
-    // Firebase Realtime Database에 메뉴 추가
+    console.log("메뉴 추가 중:", { name, menu });
     const newMenuKey = ref(db, "menus").push().key; // 새로운 메뉴의 키 생성
-    set(ref(db, "menus/" + newMenuKey), {
+    await set(ref(db, "menus/" + newMenuKey), {
       name: name,
       menu: menu,
     });
 
-    // 리스트에 추가
+    // 메뉴 리스트에 새로운 아이템 추가
     addMenuToList(name, menu, newMenuKey);
 
-    // 입력 필드 초기화
+    console.log("메뉴가 추가되었습니다.");
     nameInput.value = "";
     menuInput.value = "";
     nameInput.focus();
@@ -96,10 +96,10 @@ function loadMenus() {
 }
 
 // 메뉴 목록에 추가하는 함수
-function addMenuToList(name, menu, menuKey) {
+function addMenuToList(name, menu, key) {
   const menuList = document.getElementById("menuItems");
-
   const listItem = document.createElement("li");
+
   const textSpan = document.createElement("span");
   textSpan.textContent = `${name}: ${menu}`;
   listItem.appendChild(textSpan);
@@ -108,14 +108,13 @@ function addMenuToList(name, menu, menuKey) {
   deleteButton.textContent = "Delete";
   deleteButton.classList.add("delete-button");
   deleteButton.onclick = function () {
-    deleteMenu(menuKey);
     listItem.remove();
+    // 여기에 Firebase에서 해당 메뉴를 삭제하는 코드를 추가할 수 있습니다.
   };
 
   listItem.appendChild(deleteButton);
   menuList.appendChild(listItem);
 }
-
 // 메뉴 삭제 함수
 function deleteMenu(menuKey) {
   remove(ref(db, "menus/" + menuKey))
