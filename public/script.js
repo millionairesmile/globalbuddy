@@ -1,7 +1,7 @@
 // DOM이 완전히 로드된 후 이벤트 리스너 설정
 document.addEventListener("DOMContentLoaded", function () {
   // Add 버튼에 이벤트 리스너 추가
-  const addButton = document.querySelector(".input-area button");
+  const addButton = document.getElementById("addButton");
   addButton.addEventListener("click", addMenu);
 
   // Enter 키 입력 처리
@@ -63,6 +63,7 @@ function addMenu() {
   }
 }
 
+// 이미지 업로드 관련 함수들
 function fileInputHandler(event) {
   const files = event.target.files;
   displayImages(files);
@@ -100,6 +101,7 @@ function showFullscreenImage(src) {
   document.body.appendChild(fullscreenDiv);
 }
 
+// Clear functions
 function clearMenu() {
   const clearPassword = document.getElementById("clearPassword").value;
   const correctPassword = "1234";
@@ -122,32 +124,4 @@ function clearImages() {
   } else {
     alert("비밀번호가 올바르지 않습니다.");
   }
-}
-
-function showFullscreenImage(src) {
-  const fullscreenDiv = document.createElement("div");
-  fullscreenDiv.classList.add("fullscreen-image");
-
-  // 뒤로가기 버튼 추가
-  const backButton = document.createElement("button");
-  backButton.classList.add("back-button");
-  backButton.innerHTML = "&times;";
-  backButton.onclick = (e) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
-    fullscreenDiv.remove();
-  };
-
-  const img = document.createElement("img");
-  img.src = src;
-
-  fullscreenDiv.appendChild(backButton);
-  fullscreenDiv.appendChild(img);
-  document.body.appendChild(fullscreenDiv);
-
-  // 배경 클릭시에도 닫히도록 설정
-  fullscreenDiv.onclick = (e) => {
-    if (e.target === fullscreenDiv) {
-      fullscreenDiv.remove();
-    }
-  };
 }

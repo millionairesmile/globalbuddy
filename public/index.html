@@ -9,14 +9,10 @@
 
   <body>
     <script type="module">
-      // Import the functions you need from the SDKs you need
+      // Firebase 관련 코드
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
 
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
       const firebaseConfig = {
         apiKey: "AIzaSyCF4rHF-mrKPBFhGdgOxBXej5M8D9DewZE",
         authDomain: "global-buddy.firebaseapp.com",
@@ -28,17 +24,17 @@
         measurementId: "G-L4RY8ELS8D",
       };
 
-      // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
     </script>
+
     <div class="container">
       <h1>Menu Collection</h1>
 
       <div class="input-area">
         <input type="text" id="name" placeholder="Name" required />
         <input type="text" id="menu" placeholder="Menu" required />
-        <button>Add</button>
+        <button id="addButton">Add</button>
       </div>
 
       <div class="menu-list">
@@ -80,6 +76,7 @@
         <button onclick="clearImages()">Clear Images</button>
       </div>
     </div>
+
     <script type="module" src="script.js"></script>
   </body>
 </html>
