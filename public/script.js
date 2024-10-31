@@ -124,25 +124,13 @@ async function uploadImages(files) {
 function addImageToGallery(imageUrl, key) {
   const gallery = document.getElementById("imageGallery");
   const imgContainer = document.createElement("div");
-  imgContainer.style.position = "relative";
+  imgContainer.className = "image-container";
 
   const img = document.createElement("img");
   img.src = imageUrl;
   img.onclick = () => showFullscreenImage(imageUrl);
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "×";
-  deleteBtn.className = "delete-button";
-  deleteBtn.style.position = "absolute";
-  deleteBtn.style.top = "5px";
-  deleteBtn.style.right = "5px";
-  deleteBtn.onclick = (e) => {
-    e.stopPropagation();
-    deleteImage(key, imageUrl);
-  };
-
   imgContainer.appendChild(img);
-  imgContainer.appendChild(deleteBtn);
   gallery.appendChild(imgContainer);
 }
 
@@ -210,7 +198,12 @@ window.clearMenu = function () {
 window.clearImages = async function () {
   const clearPassword = document.getElementById("clearPassword").value;
   const correctPassword = "1234";
+
   if (clearPassword === correctPassword) {
+    if (!confirm("모든 이미지를 삭제하시겠습니까?")) {
+      return;
+    }
+
     try {
       // Storage의 모든 이미지 삭제
       const imagesStorageRef = storageRef(storage, "images");
@@ -224,7 +217,7 @@ window.clearImages = async function () {
       await remove(imagesRef);
 
       document.getElementById("imageGallery").innerHTML = "";
-      alert("이미지가 모두 삭제되었습니다.");
+      alert("모든 이미지가 삭제되었습니다.");
       document.getElementById("clearPassword").value = "";
     } catch (error) {
       console.error("이미지 초기화 중 오류 발생:", error);
