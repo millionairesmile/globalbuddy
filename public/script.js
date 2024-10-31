@@ -265,36 +265,13 @@ async function addMenu() {
   }
 }
 
-// 메뉴 목록이 변경될 때마다 업데이트
-// Firebase 데이터가 변경될 때마다 메뉴 리스트를 갱신하는 코드
-onValue(menusRef, (snapshot) => {
-  const menuList = document.getElementById("menuItems");
-  menuList.innerHTML = "";
-  let index = 1; // 순번 초기화
-
-  if (snapshot.exists()) {
-    snapshot.forEach((childSnapshot) => {
-      const key = childSnapshot.key;
-      const data = childSnapshot.val();
-
-      // 인덱스 값을 확인
-      console.log("Index:", index); // 디버깅용
-
-      // addMenuToList 함수 호출에 순번을 전달
-      addMenuToList(index, data.name, data.menu, key);
-      index++; // 순번 증가
-    });
-  }
-});
-
-function addMenuToList(index, name, menu, key) {
+function addMenuToList(name, menu, key) {
   const menuList = document.getElementById("menuItems");
   const listItem = document.createElement("li");
   listItem.dataset.key = key;
 
-  // 순번 추가
   const textSpan = document.createElement("span");
-  textSpan.textContent = `${index}. ${name}: ${menu}`;
+  textSpan.textContent = `${name}: ${menu}`;
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
