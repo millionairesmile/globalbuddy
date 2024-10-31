@@ -2,10 +2,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getDatabase,
-  ref,
+  ref as dbRef,
   push,
   set,
-  get,
   remove,
   onValue,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
@@ -14,6 +13,8 @@ import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
+  listAll,
+  deleteObject,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 // Firebase 초기화
@@ -32,36 +33,207 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const storage = getStorage(app);
-const menusRef = ref(db, "menus");
+const menusRef = dbRef(db, "menus");
+const imagesRef = dbRef(db, "images");
 
 document.addEventListener("DOMContentLoaded", function () {
   const addButton = document.querySelector("#addButton");
   addButton.addEventListener("click", addMenu);
 
-  const imageInput = document.getElementById("imageUpload");
-  imageInput.addEventListener("change", uploadImage);
+  // Enter 키 입력 처리
+  const inputs = document.querySelectorAll(".input-area input");
+  inputs.forEach((input) => {
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        addMenu();
+      }
+    });
+  });
 
-  // 실시간 데이터 동기화 설정
+  // 실시간 메뉴 데이터 동기화
   onValue(menusRef, (snapshot) => {
     const menuList = document.getElementById("menuItems");
-    const gallery = document.getElementById("imageGallery");
-    menuList.innerHTML = ""; // 기존 목록 초기화
-    gallery.innerHTML = ""; // 기존 이미지 초기화
+    menuList.innerHTML = "";
 
     if (snapshot.exists()) {
       snapshot.forEach((childSnapshot) => {
         const key = childSnapshot.key;
         const data = childSnapshot.val();
         addMenuToList(data.name, data.menu, key);
+      });
+    }
+  });
 
-        // 이미지 URL이 있는 경우 갤러리에 추가
-        if (data.imageUrl) {
-          addImageToGallery(data.imageUrl);
-        }
+  // 실시간 이미지 데이터 동기화
+  onValue(imagesRef, (snapshot) => {
+    const gallery = document.getElementById("imageGallery");
+    gallery.innerHTML = "";
+
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        addImageToGallery(data.url, childSnapshot.key);
       });
     }
   });
 });
+
+// 이미지 업로드 및 표시 관련 함수들
+window.fileInputHandler = function (event) {
+  const files = event.target.files;
+  uploadImages(files);
+};
+
+window.dropHandler = function (event) {
+  event.preventDefault();
+  const files = event.dataTransfer.files;
+  uploadImages(files);
+};
+
+window.dragOverHandler = function (event) {
+  event.preventDefault();
+};
+
+async function uploadImages(files) {
+  for (const file of Array.from(files)) {
+    if (file.type.startsWith("image/")) {
+      try {
+        // Storage에 이미지 업로드
+        const imageRef = storageRef(
+          storage,
+          `images/${Date.now()}_${file.name}`
+        );
+        const snapshot = await uploadBytes(imageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // Database에 이미지 정보 저장
+        const newImageRef = push(imagesRef);
+        await set(newImageRef, {
+          url: downloadURL,
+          timestamp: Date.now(),
+          filename: file.name,
+        });
+      } catch (error) {
+        console.error("이미지 업로드 중 오류 발생:", error);
+        alert("이미지 업로드 중 오류가 발생했습니다.");
+      }
+    }
+  }
+}
+
+function addImageToGallery(imageUrl, key) {
+  const gallery = document.getElementById("imageGallery");
+  const imgContainer = document.createElement("div");
+  imgContainer.style.position = "relative";
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.onclick = () => showFullscreenImage(imageUrl);
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "×";
+  deleteBtn.className = "delete-button";
+  deleteBtn.style.position = "absolute";
+  deleteBtn.style.top = "5px";
+  deleteBtn.style.right = "5px";
+  deleteBtn.onclick = (e) => {
+    e.stopPropagation();
+    deleteImage(key, imageUrl);
+  };
+
+  imgContainer.appendChild(img);
+  imgContainer.appendChild(deleteBtn);
+  gallery.appendChild(imgContainer);
+}
+
+async function deleteImage(key, imageUrl) {
+  if (!confirm("이미지를 삭제하시겠습니까?")) return;
+
+  try {
+    // Storage에서 이미지 삭제
+    const imageRef = storageRef(storage, imageUrl);
+    await deleteObject(imageRef);
+
+    // Database에서 이미지 정보 삭제
+    await remove(dbRef(db, `images/${key}`));
+  } catch (error) {
+    console.error("이미지 삭제 중 오류 발생:", error);
+    alert("이미지 삭제 중 오류가 발생했습니다.");
+  }
+}
+
+function showFullscreenImage(src) {
+  const fullscreenDiv = document.createElement("div");
+  fullscreenDiv.classList.add("fullscreen-image");
+
+  const backButton = document.createElement("button");
+  backButton.classList.add("back-button");
+  backButton.innerHTML = "&times;";
+  backButton.onclick = (e) => {
+    e.stopPropagation();
+    fullscreenDiv.remove();
+  };
+
+  const img = document.createElement("img");
+  img.src = src;
+
+  fullscreenDiv.appendChild(backButton);
+  fullscreenDiv.appendChild(img);
+  document.body.appendChild(fullscreenDiv);
+
+  fullscreenDiv.onclick = (e) => {
+    if (e.target === fullscreenDiv) {
+      fullscreenDiv.remove();
+    }
+  };
+}
+
+// Clear 기능
+window.clearMenu = function () {
+  const clearPassword = document.getElementById("clearPassword").value;
+  const correctPassword = "1234";
+  if (clearPassword === correctPassword) {
+    remove(menusRef)
+      .then(() => {
+        alert("목록이 초기화되었습니다.");
+        document.getElementById("clearPassword").value = "";
+      })
+      .catch((error) => {
+        console.error("목록 초기화 중 오류 발생:", error);
+        alert("목록 초기화 중 오류가 발생했습니다.");
+      });
+  } else {
+    alert("비밀번호가 올바르지 않습니다.");
+  }
+};
+
+window.clearImages = async function () {
+  const clearPassword = document.getElementById("clearPassword").value;
+  const correctPassword = "1234";
+  if (clearPassword === correctPassword) {
+    try {
+      // Storage의 모든 이미지 삭제
+      const imagesStorageRef = storageRef(storage, "images");
+      const items = await listAll(imagesStorageRef);
+
+      for (const item of items.items) {
+        await deleteObject(item);
+      }
+
+      // Database의 이미지 정보 삭제
+      await remove(imagesRef);
+
+      document.getElementById("imageGallery").innerHTML = "";
+      alert("이미지가 모두 삭제되었습니다.");
+      document.getElementById("clearPassword").value = "";
+    } catch (error) {
+      console.error("이미지 초기화 중 오류 발생:", error);
+      alert("이미지 초기화 중 오류가 발생했습니다.");
+    }
+  } else {
+    alert("비밀번호가 올바르지 않습니다.");
+  }
+};
 
 // 메뉴 추가 함수
 async function addMenu() {
@@ -92,64 +264,33 @@ async function addMenu() {
   }
 }
 
-// 이미지 업로드 함수
-async function uploadImage(event) {
-  const file = event.target.files[0];
-  if (!file || !file.type.startsWith("image/")) {
-    alert("이미지 파일만 업로드할 수 있습니다.");
-    return;
-  }
+function addMenuToList(name, menu, key) {
+  const menuList = document.getElementById("menuItems");
+  const listItem = document.createElement("li");
+  listItem.dataset.key = key;
 
-  const imageRef = storageRef(storage, `menuImages/${file.name}`);
-  try {
-    const snapshot = await uploadBytes(imageRef, file);
-    const imageUrl = await getDownloadURL(snapshot.ref);
+  const textSpan = document.createElement("span");
+  textSpan.textContent = `${name}: ${menu}`;
+  listItem.appendChild(textSpan);
 
-    // 업로드한 이미지 URL을 Realtime Database에 저장
-    const newMenuRef = push(menusRef);
-    await set(newMenuRef, {
-      imageUrl: imageUrl,
-      timestamp: Date.now(),
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.classList.add("delete-button");
+  deleteButton.onclick = function () {
+    deleteMenu(key);
+  };
+
+  listItem.appendChild(deleteButton);
+  menuList.appendChild(listItem);
+}
+
+function deleteMenu(menuKey) {
+  remove(dbRef(db, "menus/" + menuKey))
+    .then(() => {
+      console.log("메뉴가 삭제되었습니다.");
+    })
+    .catch((error) => {
+      console.error("메뉴 삭제 중 오류 발생:", error);
+      alert("메뉴 삭제 중 오류가 발생했습니다.");
     });
-
-    alert("이미지가 성공적으로 업로드되었습니다.");
-  } catch (error) {
-    console.error("이미지 업로드 중 오류 발생:", error);
-    alert("이미지 업로드 중 오류가 발생했습니다.");
-  }
-}
-
-// 갤러리에 이미지 추가 함수
-function addImageToGallery(url) {
-  const gallery = document.getElementById("imageGallery");
-  const img = document.createElement("img");
-  img.src = url;
-  img.onclick = () => showFullscreenImage(url);
-  gallery.appendChild(img);
-}
-
-function showFullscreenImage(src) {
-  const fullscreenDiv = document.createElement("div");
-  fullscreenDiv.classList.add("fullscreen-image");
-
-  const backButton = document.createElement("button");
-  backButton.classList.add("back-button");
-  backButton.innerHTML = "&times;";
-  backButton.onclick = (e) => {
-    e.stopPropagation();
-    fullscreenDiv.remove();
-  };
-
-  const img = document.createElement("img");
-  img.src = src;
-
-  fullscreenDiv.appendChild(backButton);
-  fullscreenDiv.appendChild(img);
-  document.body.appendChild(fullscreenDiv);
-
-  fullscreenDiv.onclick = (e) => {
-    if (e.target === fullscreenDiv) {
-      fullscreenDiv.remove();
-    }
-  };
 }
