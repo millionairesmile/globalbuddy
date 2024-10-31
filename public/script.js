@@ -266,15 +266,21 @@ async function addMenu() {
 }
 
 // 메뉴 목록이 변경될 때마다 업데이트
+// Firebase 데이터가 변경될 때마다 메뉴 리스트를 갱신하는 코드
 onValue(menusRef, (snapshot) => {
   const menuList = document.getElementById("menuItems");
   menuList.innerHTML = "";
-  let index = 1; // 순번을 위한 변수 초기화
+  let index = 1; // 순번 초기화
 
   if (snapshot.exists()) {
     snapshot.forEach((childSnapshot) => {
       const key = childSnapshot.key;
       const data = childSnapshot.val();
+
+      // 인덱스 값을 확인
+      console.log("Index:", index); // 디버깅용
+
+      // addMenuToList 함수 호출에 순번을 전달
       addMenuToList(index, data.name, data.menu, key);
       index++; // 순번 증가
     });
