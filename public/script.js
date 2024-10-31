@@ -265,13 +265,14 @@ async function addMenu() {
   }
 }
 
-function addMenuToList(name, menu, key) {
+function addMenuToList(index, name, menu, key) {
   const menuList = document.getElementById("menuItems");
   const listItem = document.createElement("li");
   listItem.dataset.key = key;
 
+  // 순번 추가
   const textSpan = document.createElement("span");
-  textSpan.textContent = `${name}: ${menu}`;
+  textSpan.textContent = `${index}. ${name}: ${menu}`;
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
@@ -311,14 +312,3 @@ onValue(menusRef, (snapshot) => {
     });
   }
 });
-
-// 메뉴 항목을 리스트에 추가하는 함수
-function addMenuToList(index, name, menu, key) {
-  const menuList = document.getElementById("menuItems");
-  const listItem = document.createElement("li");
-  listItem.setAttribute("data-key", key);
-
-  // 순번을 포함한 텍스트로 표시
-  listItem.textContent = `${index}. ${name}: ${menu}`;
-  menuList.appendChild(listItem);
-}
