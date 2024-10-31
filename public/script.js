@@ -1,19 +1,31 @@
-// Firebase Realtime Database 관련 모듈 가져오기
+// Firebase SDK에서 필요한 모듈 가져오기
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getDatabase,
   ref,
   set,
   get,
-  child,
-  update,
   remove,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-// Firebase 초기화 후 데이터베이스 가져오기
-const db = getDatabase();
+// Firebase 초기화
+const firebaseConfig = {
+  apiKey: "AIzaSyCF4rHF-mrKPBFhGdgOxBXej5M8D9DewZE",
+  authDomain: "global-buddy.firebaseapp.com",
+  databaseURL: "https://global-buddy-default-rtdb.firebaseio.com",
+  projectId: "global-buddy",
+  storageBucket: "global-buddy.appspot.com",
+  messagingSenderId: "339499892201",
+  appId: "1:339499892201:web:f6a1f1e72baba7e70fdf78",
+  measurementId: "G-L4RY8ELS8D",
+};
+
+// Firebase 앱 초기화
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 document.addEventListener("DOMContentLoaded", function () {
-  const addButton = document.getElementById("addButton");
+  const addButton = document.querySelector(".input-area button");
   addButton.addEventListener("click", addMenu);
 
   // Enter 키 입력 처리
@@ -37,6 +49,7 @@ function addMenu() {
   const name = nameInput.value.trim();
   const menu = menuInput.value.trim();
 
+  // 입력 유효성 검사
   if (!name || !menu) {
     alert("이름과 메뉴를 모두 입력해주세요.");
     return;
@@ -114,9 +127,7 @@ function deleteMenu(menuKey) {
     });
 }
 
-// 나머지 기존 코드 (이미지 업로드, 클리어 등)...
-
-// 이미지 업로드 관련 함수들
+// 이미지 업로드 및 표시 관련 함수
 function fileInputHandler(event) {
   const files = event.target.files;
   displayImages(files);
@@ -147,19 +158,45 @@ function displayImages(files) {
 function showFullscreenImage(src) {
   const fullscreenDiv = document.createElement("div");
   fullscreenDiv.classList.add("fullscreen-image");
-  fullscreenDiv.onclick = () => fullscreenDiv.remove();
+
+  // 뒤로가기 버튼 추가
+  const backButton = document.createElement("button");
+  backButton.classList.add("back-button");
+  backButton.innerHTML = "&times;";
+  backButton.onclick = (e) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
+    fullscreenDiv.remove();
+  };
+
   const img = document.createElement("img");
   img.src = src;
+
+  fullscreenDiv.appendChild(backButton);
   fullscreenDiv.appendChild(img);
   document.body.appendChild(fullscreenDiv);
+
+  // 배경 클릭시에도 닫히도록 설정
+  fullscreenDiv.onclick = (e) => {
+    if (e.target === fullscreenDiv) {
+      fullscreenDiv.remove();
+    }
+  };
 }
 
-// Clear functions
+// Clear List and Images
 function clearMenu() {
   const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234";
+  const correctPassword = "1234"; // 비밀번호 설정
   if (clearPassword === correctPassword) {
-    document.getElementById("menuItems").innerHTML = "";
+    const menuList = document.getElementById("menuItems");
+    const items = menuList.getElementsByTagName("li");
+
+    for (let i = items.length - 1; i >= 0; i--) {
+      const menuKey = items[i].dataset.key; // li 요소에 데이터 속성 추가
+      deleteMenu(menuKey);
+      menuList.removeChild(items[i]);
+    }
+
     alert("목록이 초기화되었습니다.");
     document.getElementById("clearPassword").value = "";
   } else {
@@ -169,7 +206,7 @@ function clearMenu() {
 
 function clearImages() {
   const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234";
+  const correctPassword = "1234"; // 비밀번호 설정
   if (clearPassword === correctPassword) {
     document.getElementById("imageGallery").innerHTML = "";
     alert("이미지가 모두 삭제되었습니다.");
