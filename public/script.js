@@ -209,9 +209,17 @@ window.clearImages = async function () {
       const imagesStorageRef = storageRef(storage, "images");
       const items = await listAll(imagesStorageRef);
 
-      for (const item of items.items) {
-        await deleteObject(item);
-      }
+      // Firebase 스토리지에서 모든 이미지를 삭제
+      const deletePromises = items.items.map(async (item) => {
+        try {
+          await deleteObject(item);
+        } catch (error) {
+          console.error(`이미지 ${item.name} 삭제 중 오류 발생:`, error);
+        }
+      });
+
+      // 모든 이미지 삭제 프로세스 완료 확인
+      await Promise.all(deletePromises);
 
       // Database의 이미지 정보 삭제
       await remove(imagesRef);
