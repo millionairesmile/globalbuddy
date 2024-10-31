@@ -32,18 +32,7 @@
     <div class="container">
       <h1>Menu Collection</h1>
 
-      <div class="input-area">
-        <input type="text" id="name" placeholder="Name" required />
-        <input type="text" id="menu" placeholder="Menu" required />
-        <button id="addButton">Add</button>
-      </div>
-
-      <div class="menu-list">
-        <h2 class="centered">Collected Menu</h2>
-        <ul id="menuItems"></ul>
-      </div>
-
-      <!-- Image Upload Section -->
+      <!-- Image Upload Section (Moved to top) -->
       <div class="image-upload">
         <h2 class="centered">Upload Menu</h2>
         <div
@@ -64,6 +53,19 @@
           />
         </div>
         <div id="imageGallery" class="image-gallery"></div>
+      </div>
+
+      <!-- Add Menu Section -->
+      <div class="input-area">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="text" id="menu" placeholder="Menu" required />
+        <button id="addButton">Add</button>
+      </div>
+
+      <!-- Collected Menu List Section -->
+      <div class="menu-list">
+        <h2 class="centered">Collected Menu</h2>
+        <ul id="menuItems"></ul>
       </div>
 
       <!-- Clear List and Password Input -->
