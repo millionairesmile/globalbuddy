@@ -175,6 +175,14 @@ h2 {
   margin-bottom: 30px;
 }
 
+/* Choose Your Menu 스타일 */
+.choose-menu {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+}
+
 .drop-area {
   border: 3px dashed #3498db;
   padding: 30px;
