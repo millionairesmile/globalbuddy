@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu Collection</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyCF4rHF-mrKPBFhGdgOxBXej5M8D9DewZE",
+        authDomain: "global-buddy.firebaseapp.com",
+        databaseURL: "https://global-buddy-default-rtdb.firebaseio.com",
+        projectId: "global-buddy",
+        storageBucket: "global-buddy.appspot.com",
+        messagingSenderId: "339499892201",
+        appId: "1:339499892201:web:f6a1f1e72baba7e70fdf78",
+        measurementId: "G-L4RY8ELS8D",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
+    <div class="container">
+      <h1>Menu Collection</h1>
+
+      <div class="input-area">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="text" id="menu" placeholder="Menu" required />
+        <button>Add</button>
+      </div>
+
+      <div class="menu-list">
+        <h2 class="centered">Collected Menu</h2>
+        <ul id="menuItems"></ul>
+      </div>
+
+      <!-- Image Upload Section -->
+      <div class="image-upload">
+        <h2 class="centered">Upload Menu</h2>
+        <div
+          id="dropArea"
+          class="drop-area"
+          ondrop="dropHandler(event);"
+          ondragover="dragOverHandler(event);"
+        >
+          <p>Drag & Drop</p>
+          <p>or</p>
+          <p>Select Files</p>
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            multiple
+            onchange="fileInputHandler(event);"
+          />
+        </div>
+        <div id="imageGallery" class="image-gallery"></div>
+      </div>
+
+      <!-- Clear List and Password Input -->
+      <div class="clear-section">
+        <input
+          type="password"
+          id="clearPassword"
+          placeholder="Enter Password"
+        />
+        <button onclick="clearMenu()">Clear List</button>
+        <button onclick="clearImages()">Clear Images</button>
+      </div>
+    </div>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
