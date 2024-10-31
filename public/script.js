@@ -101,7 +101,7 @@ async function uploadImages(files) {
         // Storage에 이미지 업로드
         const imageRef = storageRef(
           storage,
-          `images/${Date.now()}_${file.name}`
+          images/${Date.now()}_${file.name}
         );
         const snapshot = await uploadBytes(imageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
@@ -143,7 +143,7 @@ async function deleteImage(key, imageUrl) {
     await deleteObject(imageRef);
 
     // Database에서 이미지 정보 삭제
-    await remove(dbRef(db, `images/${key}`));
+    await remove(dbRef(db, images/${key}));
   } catch (error) {
     console.error("이미지 삭제 중 오류 발생:", error);
     alert("이미지 삭제 중 오류가 발생했습니다.");
@@ -214,7 +214,7 @@ window.clearImages = async function () {
         try {
           await deleteObject(item);
         } catch (error) {
-          console.error(`이미지 ${item.name} 삭제 중 오류 발생:`, error);
+          console.error(이미지 ${item.name} 삭제 중 오류 발생:, error);
         }
       });
 
@@ -271,7 +271,7 @@ function addMenuToList(name, menu, key) {
   listItem.dataset.key = key;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = `${name}: ${menu}`;
+  textSpan.textContent = ${name}: ${menu};
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
