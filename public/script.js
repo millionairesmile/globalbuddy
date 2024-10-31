@@ -54,12 +54,14 @@ document.addEventListener("DOMContentLoaded", function () {
   onValue(menusRef, (snapshot) => {
     const menuList = document.getElementById("menuItems");
     menuList.innerHTML = "";
+    let index = 1; // 인덱스 번호 초기화
 
     if (snapshot.exists()) {
       snapshot.forEach((childSnapshot) => {
         const key = childSnapshot.key;
         const data = childSnapshot.val();
-        addMenuToList(data.name, data.menu, key);
+        addMenuToList(index, data.name, data.menu, key);
+        index++; // 인덱스 증가
       });
     }
   });
@@ -98,15 +100,13 @@ async function uploadImages(files) {
   for (const file of Array.from(files)) {
     if (file.type.startsWith("image/")) {
       try {
-        // Storage에 이미지 업로드
         const imageRef = storageRef(
           storage,
-          images/${Date.now()}_${file.name}
+          `images/${Date.now()}_${file.name}`
         );
         const snapshot = await uploadBytes(imageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
 
-        // Database에 이미지 정보 저장
         const newImageRef = push(imagesRef);
         await set(newImageRef, {
           url: downloadURL,
@@ -138,12 +138,10 @@ async function deleteImage(key, imageUrl) {
   if (!confirm("이미지를 삭제하시겠습니까?")) return;
 
   try {
-    // Storage에서 이미지 삭제
     const imageRef = storageRef(storage, imageUrl);
     await deleteObject(imageRef);
 
-    // Database에서 이미지 정보 삭제
-    await remove(dbRef(db, images/${key}));
+    await remove(dbRef(db, `images/${key}`));
   } catch (error) {
     console.error("이미지 삭제 중 오류 발생:", error);
     alert("이미지 삭제 중 오류가 발생했습니다.");
@@ -205,23 +203,18 @@ window.clearImages = async function () {
     }
 
     try {
-      // Storage의 모든 이미지 삭제
       const imagesStorageRef = storageRef(storage, "images");
       const items = await listAll(imagesStorageRef);
 
-      // Firebase 스토리지에서 모든 이미지를 삭제
       const deletePromises = items.items.map(async (item) => {
         try {
           await deleteObject(item);
         } catch (error) {
-          console.error(이미지 ${item.name} 삭제 중 오류 발생:, error);
+          console.error(`이미지 ${item.name} 삭제 중 오류 발생:`, error);
         }
       });
 
-      // 모든 이미지 삭제 프로세스 완료 확인
       await Promise.all(deletePromises);
-
-      // Database의 이미지 정보 삭제
       await remove(imagesRef);
 
       document.getElementById("imageGallery").innerHTML = "";
@@ -265,13 +258,13 @@ async function addMenu() {
   }
 }
 
-function addMenuToList(name, menu, key) {
+function addMenuToList(index, name, menu, key) {
   const menuList = document.getElementById("menuItems");
   const listItem = document.createElement("li");
   listItem.dataset.key = key;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = ${name}: ${menu};
+  textSpan.textContent = `${index}. ${name}: ${menu}`; // 인덱스 추가
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
