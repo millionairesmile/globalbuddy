@@ -3,9 +3,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebas
 import {
   getDatabase,
   ref,
+  push,
   set,
   get,
   remove,
+  onValue,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
 // Firebase 초기화
@@ -23,9 +25,10 @@ const firebaseConfig = {
 // Firebase 앱 초기화
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const menusRef = ref(db, "menus");
 
 document.addEventListener("DOMContentLoaded", function () {
-  const addButton = document.querySelector(".input-area button");
+  const addButton = document.querySelector("#addButton");
   addButton.addEventListener("click", addMenu);
 
   // Enter 키 입력 처리
@@ -38,8 +41,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // 페이지 로드 시 데이터 가져오기
-  loadMenus();
+  // 실시간 데이터 동기화 설정
+  onValue(menusRef, (snapshot) => {
+    const menuList = document.getElementById("menuItems");
+    menuList.innerHTML = ""; // 기존 목록 초기화
+
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const key = childSnapshot.key;
+        const data = childSnapshot.val();
+        addMenuToList(data.name, data.menu, key);
+      });
+    }
+  });
 });
 
 // 메뉴 추가 함수
@@ -56,17 +70,14 @@ async function addMenu() {
   }
 
   try {
-    console.log("메뉴 추가 중:", { name, menu });
-    const newMenuKey = ref(db, "menus").push().key; // 새로운 메뉴의 키 생성
-    await set(ref(db, "menus/" + newMenuKey), {
+    const newMenuRef = push(menusRef);
+    await set(newMenuRef, {
       name: name,
       menu: menu,
+      timestamp: Date.now(),
     });
 
-    // 메뉴 리스트에 새로운 아이템 추가
-    addMenuToList(name, menu, newMenuKey);
-
-    console.log("메뉴가 추가되었습니다.");
+    // 입력 필드 초기화
     nameInput.value = "";
     menuInput.value = "";
     nameInput.focus();
@@ -76,29 +87,11 @@ async function addMenu() {
   }
 }
 
-// 페이지 로드 시 메뉴 불러오기
-function loadMenus() {
-  const menusRef = ref(db, "menus/");
-  get(menusRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        snapshot.forEach((childSnapshot) => {
-          const menuData = childSnapshot.val();
-          addMenuToList(menuData.name, menuData.menu, childSnapshot.key);
-        });
-      } else {
-        console.log("No data available");
-      }
-    })
-    .catch((error) => {
-      console.error("데이터를 가져오는 중 오류 발생:", error);
-    });
-}
-
 // 메뉴 목록에 추가하는 함수
 function addMenuToList(name, menu, key) {
   const menuList = document.getElementById("menuItems");
   const listItem = document.createElement("li");
+  listItem.dataset.key = key;
 
   const textSpan = document.createElement("span");
   textSpan.textContent = `${name}: ${menu}`;
@@ -108,13 +101,13 @@ function addMenuToList(name, menu, key) {
   deleteButton.textContent = "Delete";
   deleteButton.classList.add("delete-button");
   deleteButton.onclick = function () {
-    listItem.remove();
-    // 여기에 Firebase에서 해당 메뉴를 삭제하는 코드를 추가할 수 있습니다.
+    deleteMenu(key);
   };
 
   listItem.appendChild(deleteButton);
   menuList.appendChild(listItem);
 }
+
 // 메뉴 삭제 함수
 function deleteMenu(menuKey) {
   remove(ref(db, "menus/" + menuKey))
@@ -123,24 +116,25 @@ function deleteMenu(menuKey) {
     })
     .catch((error) => {
       console.error("메뉴 삭제 중 오류 발생:", error);
+      alert("메뉴 삭제 중 오류가 발생했습니다.");
     });
 }
 
-// 이미지 업로드 및 표시 관련 함수
-function fileInputHandler(event) {
+// 이미지 업로드 및 표시 관련 함수들
+window.fileInputHandler = function (event) {
   const files = event.target.files;
   displayImages(files);
-}
+};
 
-function dropHandler(event) {
+window.dropHandler = function (event) {
   event.preventDefault();
   const files = event.dataTransfer.files;
   displayImages(files);
-}
+};
 
-function dragOverHandler(event) {
+window.dragOverHandler = function (event) {
   event.preventDefault();
-}
+};
 
 function displayImages(files) {
   const gallery = document.getElementById("imageGallery");
@@ -158,12 +152,11 @@ function showFullscreenImage(src) {
   const fullscreenDiv = document.createElement("div");
   fullscreenDiv.classList.add("fullscreen-image");
 
-  // 뒤로가기 버튼 추가
   const backButton = document.createElement("button");
   backButton.classList.add("back-button");
   backButton.innerHTML = "&times;";
   backButton.onclick = (e) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
+    e.stopPropagation();
     fullscreenDiv.remove();
   };
 
@@ -174,7 +167,6 @@ function showFullscreenImage(src) {
   fullscreenDiv.appendChild(img);
   document.body.appendChild(fullscreenDiv);
 
-  // 배경 클릭시에도 닫히도록 설정
   fullscreenDiv.onclick = (e) => {
     if (e.target === fullscreenDiv) {
       fullscreenDiv.remove();
@@ -182,30 +174,28 @@ function showFullscreenImage(src) {
   };
 }
 
-// Clear List and Images
-function clearMenu() {
+// Clear 기능들을 전역 스코프에 추가
+window.clearMenu = function () {
   const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234"; // 비밀번호 설정
+  const correctPassword = "1234";
   if (clearPassword === correctPassword) {
-    const menuList = document.getElementById("menuItems");
-    const items = menuList.getElementsByTagName("li");
-
-    for (let i = items.length - 1; i >= 0; i--) {
-      const menuKey = items[i].dataset.key; // li 요소에 데이터 속성 추가
-      deleteMenu(menuKey);
-      menuList.removeChild(items[i]);
-    }
-
-    alert("목록이 초기화되었습니다.");
-    document.getElementById("clearPassword").value = "";
+    remove(menusRef)
+      .then(() => {
+        alert("목록이 초기화되었습니다.");
+        document.getElementById("clearPassword").value = "";
+      })
+      .catch((error) => {
+        console.error("목록 초기화 중 오류 발생:", error);
+        alert("목록 초기화 중 오류가 발생했습니다.");
+      });
   } else {
     alert("비밀번호가 올바르지 않습니다.");
   }
-}
+};
 
-function clearImages() {
+window.clearImages = function () {
   const clearPassword = document.getElementById("clearPassword").value;
-  const correctPassword = "1234"; // 비밀번호 설정
+  const correctPassword = "1234";
   if (clearPassword === correctPassword) {
     document.getElementById("imageGallery").innerHTML = "";
     alert("이미지가 모두 삭제되었습니다.");
@@ -213,4 +203,4 @@ function clearImages() {
   } else {
     alert("비밀번호가 올바르지 않습니다.");
   }
-}
+};
