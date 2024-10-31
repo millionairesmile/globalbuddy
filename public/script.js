@@ -1,6 +1,18 @@
-// DOM이 완전히 로드된 후 이벤트 리스너 설정
+// Firebase Realtime Database 관련 모듈 가져오기
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  child,
+  update,
+  remove,
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+// Firebase 초기화 후 데이터베이스 가져오기
+const db = getDatabase();
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Add 버튼에 이벤트 리스너 추가
   const addButton = document.getElementById("addButton");
   addButton.addEventListener("click", addMenu);
 
@@ -13,55 +25,96 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  // 페이지 로드 시 데이터 가져오기
+  loadMenus();
 });
 
+// 메뉴 추가 함수
 function addMenu() {
   const nameInput = document.getElementById("name");
   const menuInput = document.getElementById("menu");
   const name = nameInput.value.trim();
   const menu = menuInput.value.trim();
 
-  // 입력 유효성 검사
   if (!name || !menu) {
     alert("이름과 메뉴를 모두 입력해주세요.");
     return;
   }
 
   try {
-    // 새 리스트 아이템 생성
-    const listItem = document.createElement("li");
+    // Firebase Realtime Database에 메뉴 추가
+    const newMenuKey = ref(db, "menus").push().key; // 새로운 메뉴의 키 생성
+    set(ref(db, "menus/" + newMenuKey), {
+      name: name,
+      menu: menu,
+    });
 
-    // 텍스트 내용을 담을 span 엘리먼트 생성
-    const textSpan = document.createElement("span");
-    textSpan.textContent = `${name}: ${menu}`;
-    listItem.appendChild(textSpan);
-
-    // 삭제 버튼 생성
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.classList.add("delete-button");
-    deleteButton.onclick = function () {
-      listItem.remove();
-    };
-
-    // 리스트 아이템에 삭제 버튼 추가
-    listItem.appendChild(deleteButton);
-
-    // 메뉴 리스트에 새로운 아이템 추가
-    const menuList = document.getElementById("menuItems");
-    menuList.appendChild(listItem);
+    // 리스트에 추가
+    addMenuToList(name, menu, newMenuKey);
 
     // 입력 필드 초기화
     nameInput.value = "";
     menuInput.value = "";
-
-    // 첫 번째 입력 필드로 포커스 이동
     nameInput.focus();
   } catch (error) {
     console.error("메뉴 추가 중 오류 발생:", error);
     alert("메뉴를 추가하는 중 오류가 발생했습니다.");
   }
 }
+
+// 페이지 로드 시 메뉴 불러오기
+function loadMenus() {
+  const menusRef = ref(db, "menus/");
+  get(menusRef)
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const menuData = childSnapshot.val();
+          addMenuToList(menuData.name, menuData.menu, childSnapshot.key);
+        });
+      } else {
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error("데이터를 가져오는 중 오류 발생:", error);
+    });
+}
+
+// 메뉴 목록에 추가하는 함수
+function addMenuToList(name, menu, menuKey) {
+  const menuList = document.getElementById("menuItems");
+
+  const listItem = document.createElement("li");
+  const textSpan = document.createElement("span");
+  textSpan.textContent = `${name}: ${menu}`;
+  listItem.appendChild(textSpan);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.classList.add("delete-button");
+  deleteButton.onclick = function () {
+    deleteMenu(menuKey);
+    listItem.remove();
+  };
+
+  listItem.appendChild(deleteButton);
+  menuList.appendChild(listItem);
+}
+
+// 메뉴 삭제 함수
+function deleteMenu(menuKey) {
+  remove(ref(db, "menus/" + menuKey))
+    .then(() => {
+      console.log("메뉴가 삭제되었습니다.");
+    })
+    .catch((error) => {
+      console.error("메뉴 삭제 중 오류 발생:", error);
+    });
+}
+
+// 나머지 기존 코드 (이미지 업로드, 클리어 등)...
 
 // 이미지 업로드 관련 함수들
 function fileInputHandler(event) {
