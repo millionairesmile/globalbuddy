@@ -58,9 +58,11 @@
       <div class="menu-list">
         <h2 class="centered">Collected Menu</h2>
         <div class="menu-slider">
-          <button class="arrow left" onclick="slideMenu(-1)">&#9664;</button>
-          <ul id="menuItems" class="menu-items"></ul>
-          <button class="arrow right" onclick="slideMenu(1)">&#9654;</button>
+          <button class="arrow left" onclick="changePage(-1)">&#9664;</button>
+          <div class="menu-container">
+            <ul id="menuItems" class="menu-items"></ul>
+          </div>
+          <button class="arrow right" onclick="changePage(1)">&#9654;</button>
         </div>
       </div>
 

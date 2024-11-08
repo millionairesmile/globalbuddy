@@ -495,29 +495,30 @@ input:-webkit-autofill {
 }
 
 .menu-slider {
-  position: relative;
   display: flex;
   align-items: center;
+  position: relative;
+}
+
+.menu-container {
+  overflow: hidden;
+  width: 100%;
 }
 
 .menu-items {
-  display: flex;
-  overflow: hidden;
-  width: 100%;
-  max-width: 800px;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-list ul {
-  list-style: none;
-  display: flex;
+  display: grid;
+  grid-template-rows: repeat(10, 1fr); /* 10줄에 1개씩 표시 */
+  gap: 10px;
   transition: transform 0.3s ease;
 }
 
 .menu-list li {
-  min-width: calc(100% / 10);
-  margin: 0 5px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  font-size: 16px;
 }
 
 .arrow {
