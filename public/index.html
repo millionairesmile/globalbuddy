@@ -57,7 +57,11 @@
       <!-- Collected Menu List Section -->
       <div class="menu-list">
         <h2 class="centered">Collected Menu</h2>
-        <ul id="menuItems"></ul>
+        <div class="menu-slider">
+          <button class="arrow left" onclick="slideMenu(-1)">&#9664;</button>
+          <ul id="menuItems" class="menu-items"></ul>
+          <button class="arrow right" onclick="slideMenu(1)">&#9654;</button>
+        </div>
       </div>
 
       <!-- Clear List and Password Input -->

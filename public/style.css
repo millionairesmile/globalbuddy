@@ -246,7 +246,7 @@ h2 {
 /* 사진 갤러리 및 버튼 사이의 간격을 조정 */
 .image-gallery,
 #fileInput {
-  margin-bottom: 30px; /* 사진 갤러리와 업로드 버튼 간의 간격 */
+  margin-bottom: 5px; /* 사진 갤러리와 업로드 버튼 간의 간격 */
 }
 
 /* Choose Your Menu 스타일 */
@@ -492,4 +492,43 @@ input:-webkit-autofill {
 .centered {
   text-align: center;
   /* Center aligns the text */
+}
+
+.menu-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.menu-items {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-list ul {
+  list-style: none;
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.menu-list li {
+  min-width: calc(100% / 10);
+  margin: 0 5px;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.arrow:hover {
+  color: #2980b9;
 }

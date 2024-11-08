@@ -355,6 +355,30 @@ function deleteMenu(menuKey) {
   };
 }
 
+let currentSlide = 0;
+const itemsPerSlide = 10;
+
+function updateMenuDisplay() {
+  const menuItems = document.getElementById("menuItems");
+  const totalItems = menuItems.children.length;
+  const maxSlide = Math.ceil(totalItems / itemsPerSlide) - 1;
+
+  // Ensure the current slide is within bounds
+  currentSlide = Math.max(0, Math.min(currentSlide, maxSlide));
+
+  // Calculate the transform amount
+  const offset = -(currentSlide * 100) + "%";
+  menuItems.style.transform = `translateX(${offset})`;
+}
+
+function slideMenu(direction) {
+  currentSlide += direction;
+  updateMenuDisplay();
+}
+
+// Initial display update
+updateMenuDisplay();
+
 // CSS 스타일 (필요한 경우 추가)
 const style = document.createElement("style");
 style.textContent = `
