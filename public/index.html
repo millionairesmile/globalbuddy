@@ -32,28 +32,17 @@
     <div class="container">
       <h1>Menu Collection</h1>
 
-      <!-- Image Upload Section -->
-      <div class="image-upload">
-        <h2 class="centered">Menu</h2>
-        <div
-          id="dropArea"
-          class="drop-area"
-          ondrop="dropHandler(event);"
-          ondragover="dragOverHandler(event);"
-        >
-          <p>Drag & Drop</p>
-          <p>or</p>
-          <p>Select Files</p>
-          <input
-            type="file"
-            id="fileInput"
-            accept="image/*"
-            multiple
-            onchange="fileInputHandler(event);"
-          />
-        </div>
-        <div id="imageGallery" class="image-gallery"></div>
+      <div class="upload-section">
+        <label for="fileInput" class="upload-label">사진 업로드</label>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          class="upload-input"
+          onchange="fileInputHandler(event)"
+        />
       </div>
+      <div id="imageGallery" class="image-gallery"></div>
 
       <!-- Choose Your Menu 섹션 -->
       <div class="choose-menu">

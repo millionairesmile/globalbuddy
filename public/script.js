@@ -377,19 +377,19 @@ style.textContent = `
 /* Buttons */
 .confirm-delete-button,
 .cancel-delete-button {
-  padding: 8px 16px;
-  margin: 5px;
+  padding: 8px 15px;
+  background: #e74c3c;
+  color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  margin: 5px;
+  font-weight: bold;
 }
 
 .confirm-delete-button {
-  background-color: red;
-  color: white;
   opacity: 0.5; /* 비활성화 시 반투명 */
 }
 
@@ -397,19 +397,17 @@ style.textContent = `
   opacity: 1; /* 활성화 시 완전 불투명 */
 }
 
-.cancel-delete-button {
-  background-color: #ddd;
-  color: black;
+/* Hover Effect for Active Delete Button */
+.confirm-delete-button.active:hover {
+  background-color: #c0392b;
 }
 
-/* Hover and Active States */
-.confirm-delete-button.active:hover {
-  background-color: darkred;
+.cancel-delete-button {
+  background-color: #95a5a6;
 }
 
 .cancel-delete-button:hover {
-  background-color: #bbb;
-  color: white;
+  background-color: #7f8c8d;
 }
 `;
 document.head.appendChild(style);
