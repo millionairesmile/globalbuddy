@@ -102,7 +102,7 @@ async function uploadImages(files) {
       try {
         const imageRef = storageRef(
           storage,
-          `images/${Date.now()}_${file.name}`
+          images/${Date.now()}_${file.name}
         );
         const snapshot = await uploadBytes(imageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
@@ -158,7 +158,7 @@ async function deleteImage(key, imageUrl) {
     const imageRef = storageRef(storage, imageUrl);
     await deleteObject(imageRef);
 
-    await remove(dbRef(db, `images/${key}`));
+    await remove(dbRef(db, images/${key}));
   } catch (error) {
     console.error("이미지 삭제 중 오류 발생:", error);
     alert("이미지 삭제 중 오류가 발생했습니다.");
@@ -227,7 +227,7 @@ window.clearImages = async function () {
         try {
           await deleteObject(item);
         } catch (error) {
-          console.error(`이미지 ${item.name} 삭제 중 오류 발생:`, error);
+          console.error(이미지 ${item.name} 삭제 중 오류 발생:, error);
         }
       });
 
@@ -281,7 +281,7 @@ function addMenuToList(index, name, menu, key) {
   listItem.dataset.key = key;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = `${index}. ${name}: ${menu}`; // 인덱스 추가
+  textSpan.textContent = ${index}. ${name}: ${menu}; // 인덱스 추가
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
@@ -355,33 +355,9 @@ function deleteMenu(menuKey) {
   };
 }
 
-let currentSlide = 0;
-const itemsPerSlide = 10;
-
-function updateMenuDisplay() {
-  const menuItems = document.getElementById("menuItems");
-  const totalItems = menuItems.children.length;
-  const maxSlide = Math.ceil(totalItems / itemsPerSlide) - 1;
-
-  // Ensure the current slide is within bounds
-  currentSlide = Math.max(0, Math.min(currentSlide, maxSlide));
-
-  // Calculate the transform amount
-  const offset = -(currentSlide * 100) + "%";
-  menuItems.style.transform = `translateX(${offset})`;
-}
-
-function slideMenu(direction) {
-  currentSlide += direction;
-  updateMenuDisplay();
-}
-
-// Initial display update
-updateMenuDisplay();
-
 // CSS 스타일 (필요한 경우 추가)
 const style = document.createElement("style");
-style.textContent = `
+style.textContent = 
 .delete-confirm-modal {
   position: fixed;
   top: 50%;
@@ -450,5 +426,5 @@ style.textContent = `
 .cancel-delete-button:hover {
   background-color: #7f8c8d;
 }
-`;
+;
 document.head.appendChild(style);
