@@ -102,8 +102,9 @@ async function uploadImages(files) {
       try {
         const imageRef = storageRef(
           storage,
-          images/${Date.now()}_${file.name}
+          `images/${Date.now()}_${file.name}`
         );
+
         const snapshot = await uploadBytes(imageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
 
@@ -121,7 +122,6 @@ async function uploadImages(files) {
   }
 }
 
-// 이미지 갤러리에 사진 추가 후 클래스 업데이트
 function addImageToGallery(imageUrl, key) {
   const gallery = document.getElementById("imageGallery");
   const imgContainer = document.createElement("div");
@@ -133,22 +133,6 @@ function addImageToGallery(imageUrl, key) {
 
   imgContainer.appendChild(img);
   gallery.appendChild(imgContainer);
-
-  updateGalleryLayout(gallery);
-}
-
-// 이미지 갤러리의 레이아웃을 업데이트하는 함수
-function updateGalleryLayout(gallery) {
-  const imagesCount = gallery.childElementCount;
-  gallery.classList.remove("single-image", "two-images", "multiple-images");
-
-  if (imagesCount === 1) {
-    gallery.classList.add("single-image");
-  } else if (imagesCount === 2) {
-    gallery.classList.add("two-images");
-  } else {
-    gallery.classList.add("multiple-images");
-  }
 }
 
 async function deleteImage(key, imageUrl) {
@@ -158,7 +142,7 @@ async function deleteImage(key, imageUrl) {
     const imageRef = storageRef(storage, imageUrl);
     await deleteObject(imageRef);
 
-    await remove(dbRef(db, images/${key}));
+    await remove(dbRef(db, `images/${key}`));
   } catch (error) {
     console.error("이미지 삭제 중 오류 발생:", error);
     alert("이미지 삭제 중 오류가 발생했습니다.");
@@ -227,7 +211,7 @@ window.clearImages = async function () {
         try {
           await deleteObject(item);
         } catch (error) {
-          console.error(이미지 ${item.name} 삭제 중 오류 발생:, error);
+          console.error(`이미지 ${item.name} 삭제 중 오류 발생:`, error);
         }
       });
 
@@ -281,7 +265,7 @@ function addMenuToList(index, name, menu, key) {
   listItem.dataset.key = key;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = ${index}. ${name}: ${menu}; // 인덱스 추가
+  textSpan.textContent = `${index}. ${name}: ${menu}`; // 인덱스 추가
   listItem.appendChild(textSpan);
 
   const deleteButton = document.createElement("button");
@@ -357,74 +341,43 @@ function deleteMenu(menuKey) {
 
 // CSS 스타일 (필요한 경우 추가)
 const style = document.createElement("style");
-style.textContent = 
-.delete-confirm-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  width: 300px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  z-index: 1000;
-  font-family: Arial, sans-serif;
-}
-
-/* Text instruction */
-.delete-confirm-modal p {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 12px;
-}
-
-/* Input field for typing 'delete' */
-.delete-confirm-input {
-  padding: 8px;
-  width: 80%;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-/* Buttons */
-.confirm-delete-button,
-.cancel-delete-button {
-  padding: 8px 15px;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  margin: 5px;
-  font-weight: bold;
-}
-
-.confirm-delete-button {
-  opacity: 0.5; /* 비활성화 시 반투명 */
-}
-
-.confirm-delete-button.active {
-  opacity: 1; /* 활성화 시 완전 불투명 */
-}
-
-/* Hover Effect for Active Delete Button */
-.confirm-delete-button.active:hover {
-  background-color: #c0392b;
-}
-
-.cancel-delete-button {
-  background-color: #95a5a6;
-}
-
-.cancel-delete-button:hover {
-  background-color: #7f8c8d;
-}
-;
+style.textContent = `
+  .delete-confirm-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+  }
+  .delete-confirm-input {
+    margin: 10px 0;
+    padding: 8px;
+    width: 80%;
+  }
+  .confirm-delete-button {
+    margin: 5px;
+    padding: 8px 16px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  .confirm-delete-button.active {
+    opacity: 1;
+  }
+  .cancel-delete-button {
+    margin: 5px;
+    padding: 8px 16px;
+    background: #ccc;
+    color: black;
+    border: none;
+    cursor: pointer;
+  }
+`;
 document.head.appendChild(style);
