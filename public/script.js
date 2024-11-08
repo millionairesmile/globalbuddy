@@ -341,42 +341,75 @@ function deleteMenu(menuKey) {
 // CSS 스타일 (필요한 경우 추가)
 const style = document.createElement("style");
 style.textContent = `
-  .delete-confirm-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background: #fff;
-    border: 2px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    z-index: 1000;
-  }
-  .delete-confirm-input {
-    margin: 10px 0;
-    padding: 8px;
-    width: 80%;
-  }
-  .confirm-delete-button {
-    margin: 5px;
-    padding: 8px 16px;
-    background: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-    opacity: 0.5;
-  }
-  .confirm-delete-button.active {
-    opacity: 1;
-  }
-  .cancel-delete-button {
-    margin: 5px;
-    padding: 8px 16px;
-    background: #ccc;
-    color: black;
-    border: none;
-    cursor: pointer;
-  }
+.delete-confirm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  width: 300px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+}
+
+/* Text instruction */
+.delete-confirm-modal p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+/* Input field for typing 'delete' */
+.delete-confirm-input {
+  padding: 8px;
+  width: 80%;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Buttons */
+.confirm-delete-button,
+.cancel-delete-button {
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.confirm-delete-button {
+  background-color: red;
+  color: white;
+  opacity: 0.5; /* 비활성화 시 반투명 */
+}
+
+.confirm-delete-button.active {
+  opacity: 1; /* 활성화 시 완전 불투명 */
+}
+
+.cancel-delete-button {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Hover and Active States */
+.confirm-delete-button.active:hover {
+  background-color: darkred;
+}
+
+.cancel-delete-button:hover {
+  background-color: #bbb;
+  color: white;
+}
 `;
 document.head.appendChild(style);
