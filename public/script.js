@@ -355,27 +355,28 @@ function deleteMenu(menuKey) {
   };
 }
 
-let currentPage = 0;
-const itemsPerPage = 10;
+let currentSlide = 0;
+const itemsPerSlide = 10;
 
 function updateMenuDisplay() {
   const menuItems = document.getElementById("menuItems");
-  const totalPages = Math.ceil(menuItems.children.length / itemsPerPage);
+  const totalItems = menuItems.children.length;
+  const maxSlide = Math.ceil(totalItems / itemsPerSlide) - 1;
 
-  // 현재 페이지가 범위를 벗어나지 않도록 제한
-  currentPage = Math.max(0, Math.min(currentPage, totalPages - 1));
+  // Ensure the current slide is within bounds
+  currentSlide = Math.max(0, Math.min(currentSlide, maxSlide));
 
-  // 페이지에 따라 Y축 이동
-  const offsetY = -(currentPage * 100) + "%";
-  menuItems.style.transform = `translateY(${offsetY})`;
+  // Calculate the transform amount
+  const offset = -(currentSlide * 100) + "%";
+  menuItems.style.transform = `translateX(${offset})`;
 }
 
-function changePage(direction) {
-  currentPage += direction;
+function slideMenu(direction) {
+  currentSlide += direction;
   updateMenuDisplay();
 }
 
-// 초기 디스플레이 업데이트
+// Initial display update
 updateMenuDisplay();
 
 // CSS 스타일 (필요한 경우 추가)

@@ -503,11 +503,13 @@ input:-webkit-autofill {
 .menu-container {
   overflow: hidden;
   width: 100%;
+  max-height: 0; /* 리스트가 없을 때 높이를 0으로 설정 */
+  transition: max-height 0.3s ease; /* 높이 변경 애니메이션 */
 }
 
 .menu-items {
   display: grid;
-  grid-template-rows: repeat(10, 1fr); /* 10줄에 1개씩 표시 */
+  grid-template-rows: repeat(10, auto); /* 10줄에 1개씩 */
   gap: 10px;
   transition: transform 0.3s ease;
 }
