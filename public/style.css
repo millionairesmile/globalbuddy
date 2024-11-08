@@ -200,9 +200,10 @@ h2 {
 .image-gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
+  gap: 10px;
   margin-top: 20px;
+  padding-bottom: 20px; /* 갤러리와 아래 버튼 간의 간격 */
 }
 
 .image-container {
@@ -216,6 +217,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px; /* 이미지와 아래 버튼 간의 간격 */
 }
 
 .image-container img {
@@ -237,9 +239,37 @@ h2 {
   justify-content: center;
 }
 
-/* 3개 이상의 사진일 경우 기본 정렬 */
 .image-gallery.multiple-images {
   justify-content: space-around;
+}
+
+/* 파일 선택 버튼 스타일 */
+#fileInput {
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+#fileInput:hover {
+  background-color: #2980b9;
+}
+
+/* 사진 갤러리 및 버튼 사이의 간격을 조정 */
+.image-gallery,
+#fileInput {
+  margin-bottom: 30px; /* 사진 갤러리와 업로드 버튼 간의 간격 */
 }
 
 /* Choose Your Menu 스타일 */
