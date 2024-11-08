@@ -289,7 +289,6 @@ function deleteMenu(menuKey) {
 
   const inputField = document.createElement("input");
   inputField.type = "text";
-  inputField.placeholder = "delete를 입력하세요";
   inputField.classList.add("delete-confirm-input");
 
   const deleteButton = document.createElement("button");
