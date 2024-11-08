@@ -121,6 +121,7 @@ async function uploadImages(files) {
   }
 }
 
+// 이미지 갤러리에 사진 추가 후 클래스 업데이트
 function addImageToGallery(imageUrl, key) {
   const gallery = document.getElementById("imageGallery");
   const imgContainer = document.createElement("div");
@@ -132,6 +133,22 @@ function addImageToGallery(imageUrl, key) {
 
   imgContainer.appendChild(img);
   gallery.appendChild(imgContainer);
+
+  updateGalleryLayout(gallery);
+}
+
+// 이미지 갤러리의 레이아웃을 업데이트하는 함수
+function updateGalleryLayout(gallery) {
+  const imagesCount = gallery.childElementCount;
+  gallery.classList.remove("single-image", "two-images", "multiple-images");
+
+  if (imagesCount === 1) {
+    gallery.classList.add("single-image");
+  } else if (imagesCount === 2) {
+    gallery.classList.add("two-images");
+  } else {
+    gallery.classList.add("multiple-images");
+  }
 }
 
 async function deleteImage(key, imageUrl) {
