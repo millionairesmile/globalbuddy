@@ -243,29 +243,6 @@ h2 {
   justify-content: space-around;
 }
 
-/* 파일 선택 버튼 스타일 */
-#fileInput {
-  margin-top: 20px;
-  display: block;
-  width: 100%;
-  max-width: 200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 10px;
-  background-color: #3498db;
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-#fileInput:hover {
-  background-color: #2980b9;
-}
-
 /* 사진 갤러리 및 버튼 사이의 간격을 조정 */
 .image-gallery,
 #fileInput {
