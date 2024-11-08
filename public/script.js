@@ -279,12 +279,104 @@ function addMenuToList(index, name, menu, key) {
 }
 
 function deleteMenu(menuKey) {
-  remove(dbRef(db, "menus/" + menuKey))
-    .then(() => {
-      console.log("메뉴가 삭제되었습니다.");
-    })
-    .catch((error) => {
-      console.error("메뉴 삭제 중 오류 발생:", error);
-      alert("메뉴 삭제 중 오류가 발생했습니다.");
-    });
+  // 기존 삭제 버튼 클릭 시 삭제 확인 모달 표시
+  const confirmDiv = document.createElement("div");
+  confirmDiv.classList.add("delete-confirm-modal");
+
+  const instruction = document.createElement("p");
+  instruction.textContent = "Type 'delete' to confirm:";
+
+  const inputField = document.createElement("input");
+  inputField.type = "text";
+  inputField.placeholder = "delete를 입력하세요";
+  inputField.classList.add("delete-confirm-input");
+
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.disabled = true; // 초기 비활성화
+  deleteButton.classList.add("confirm-delete-button");
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.classList.add("cancel-delete-button");
+
+  // 모달에 요소 추가
+  confirmDiv.appendChild(instruction);
+  confirmDiv.appendChild(inputField);
+  confirmDiv.appendChild(deleteButton);
+  confirmDiv.appendChild(cancelButton);
+  document.body.appendChild(confirmDiv);
+
+  // 입력 확인 이벤트
+  inputField.addEventListener("input", () => {
+    if (inputField.value.trim() === "delete") {
+      deleteButton.disabled = false; // delete가 맞으면 버튼 활성화
+      deleteButton.classList.add("active");
+    } else {
+      deleteButton.disabled = true; // 틀리면 버튼 비활성화
+      deleteButton.classList.remove("active");
+    }
+  });
+
+  // Delete 버튼 클릭 시 실제 삭제
+  deleteButton.onclick = () => {
+    remove(dbRef(db, "menus/" + menuKey))
+      .then(() => {
+        console.log("메뉴가 삭제되었습니다.");
+        confirmDiv.remove(); // 모달 제거
+      })
+      .catch((error) => {
+        console.error("메뉴 삭제 중 오류 발생:", error);
+        alert("메뉴 삭제 중 오류가 발생했습니다.");
+        confirmDiv.remove(); // 모달 제거
+      });
+  };
+
+  // Cancel 버튼 클릭 시 모달 제거
+  cancelButton.onclick = () => {
+    confirmDiv.remove();
+  };
 }
+
+// CSS 스타일 (필요한 경우 추가)
+const style = document.createElement("style");
+style.textContent = `
+  .delete-confirm-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+  }
+  .delete-confirm-input {
+    margin: 10px 0;
+    padding: 8px;
+    width: 80%;
+  }
+  .confirm-delete-button {
+    margin: 5px;
+    padding: 8px 16px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  .confirm-delete-button.active {
+    opacity: 1;
+  }
+  .cancel-delete-button {
+    margin: 5px;
+    padding: 8px 16px;
+    background: #ccc;
+    color: black;
+    border: none;
+    cursor: pointer;
+  }
+`;
+document.head.appendChild(style);
