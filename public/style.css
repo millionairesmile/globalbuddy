@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap");
+
 /* 기본 스타일 및 리셋 */
 * {
   margin: 0;
@@ -6,9 +8,10 @@
   transition: all 0.3s ease;
 }
 
+/* body의 폰트를 Poppins로 변경 */
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: "Sour Gummy", sans-serif;
+  background: linear-gradient(135deg, #f1f2f6 0%, #dfe6e9 100%);
   color: #2c3e50;
   min-height: 100vh;
   display: flex;
@@ -21,7 +24,7 @@ body {
 .container {
   max-width: 800px;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: transparent;
   border-radius: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -29,25 +32,35 @@ body {
 }
 
 /* 제목 스타일링 */
+
 h1 {
-  color: #2c3e50;
-  text-align: center;
-  font-size: 2.5em;
-  margin-bottom: 30px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   position: relative;
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  color: #2c3e50;
+  padding: 30px 0; /* 구름 이미지와 텍스트 간격 */
+  z-index: 1; /* 텍스트가 구름 이미지 위에 오도록 설정 */
 }
 
-h1::after {
+h1::before {
   content: "";
-  display: block;
-  width: 50px;
-  height: 4px;
-  background: #3498db;
-  margin: 10px auto;
-  border-radius: 2px;
+  position: absolute;
+  top: -30px; /* 구름이 텍스트 위에 위치하게 조정 */
+  left: 50%;
+  transform: translateX(-50%); /* 구름이 가운데 오도록 */
+  width: 500px; /* 구름 이미지의 가로 길이를 늘림 */
+  height: 150px; /* 구름 이미지 크기 */
+  background: url("https://cdn.crowdpic.net/detail-thumb/thumb_d_41B3965B847D6178A199342D42B18A44.png")
+    no-repeat center center;
+  background-size: contain; /* 구름 이미지가 크기에 맞춰 자동 크기 조정 */
+  z-index: -1; /* 텍스트 아래 배치 */
+  pointer-events: none; /* 마우스 이벤트가 구름에 영향을 미치지 않도록 설정 */
+}
+
+h1 span {
+  position: relative;
+  z-index: 1; /* 텍스트가 구름 이미지 위로 오도록 설정 */
 }
 
 h2 {
@@ -250,7 +263,7 @@ h2 {
   padding: 10px 20px;
   background-color: #3498db;
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
@@ -445,9 +458,8 @@ h2 {
 /* 기존의 반응형 디자인 설정 개선 */
 @media (max-width: 768px) {
   .container {
-    padding: 10px; /* 모바일에서 여백을 조금 더 줄임 */
-    width: 100%; /* 모바일에서 컨테이너를 화면 전체에 맞춤 */
-    max-width: 95vw; /* 여백을 최소화하여 화면 폭에 가깝게 조정 */
+    padding: 15px;
+    max-width: 100vw; /* 모바일에서 여백을 최소화하여 더 넓게 표시 */
   }
 
   .input-area {
@@ -667,4 +679,14 @@ input:-webkit-autofill {
 .centered {
   text-align: center;
   /* Center aligns the text */
+}
+
+#addButton {
+  font-family: "Sour Gummy", sans-serif; /* "Sour Gummy"와 유사한 스타일 */
+  font-size: 18px; /* 버튼 텍스트 크기 */
+  background-color: #3498db; /* 버튼 배경색 */
+  color: white; /* 버튼 텍스트 색상 */
+  padding: 10px 20px; /* 버튼 여백 */
+  border: none; /* 버튼의 기본 테두리 제거 */
+  border-radius: 8px; /* 버튼 모서리 둥글게 */
 }
