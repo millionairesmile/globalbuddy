@@ -488,7 +488,7 @@ h2 {
 /* 태블릿 환경 대응 */
 @media (max-width: 1024px) {
   .container {
-    padding: 20px;
+    padding: 10px;
     max-width: 90%; /* 컨테이너 폭을 더 넓게 잡아 줌 */
   }
 
