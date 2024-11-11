@@ -31,17 +31,22 @@
     <div class="container">
       <h1>Menu Collection</h1>
 
-      <div class="upload-section">
-        <label for="fileInput" class="upload-label">Menu</label>
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*"
-          class="upload-input"
-          onchange="fileInputHandler(event)"
-        />
+      <div class="menu-photo-container">
+        <div class="upload-section">
+          <label for="fileInput" class="upload-label">
+            <h2>Menu</h2>
+            <!-- Menu 텍스트에 스타일이 적용됨 -->
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            class="upload-input"
+            onchange="fileInputHandler(event)"
+          />
+        </div>
+        <div id="imageGallery" class="image-gallery"></div>
       </div>
-      <div id="imageGallery" class="image-gallery"></div>
 
       <!-- Choose Your Menu 섹션 -->
       <div class="choose-menu">
