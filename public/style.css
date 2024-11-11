@@ -20,27 +20,22 @@ body {
   font-family: "Sour Gummy", sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   color: #2c3e50;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: 40px 20px;
   line-height: 1.6;
-  max-width: 100%; /* 모바일에서 여백이 없도록 수정 */
-  margin: 0 auto; /* 중앙 정렬 */
-  overflow-x: hidden; /* 수평 스크롤 방지 */
 }
 
 /* 컨테이너 스타일링 */
 .container {
+  max-width: 800px;
   width: 100%;
-  max-width: 100%; /* 모바일 화면에서 여백이 없도록 설정 */
-  background-color: transparent;
-  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 30px;
   backdrop-filter: blur(10px);
-  margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
-  overflow: hidden; /* 여백을 방지 */
 }
 
 /* 제목 스타일링 */
@@ -675,7 +670,7 @@ input:-webkit-autofill {
 }
 
 /* 모바일 최적화 */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .menu-page {
     padding: 10px;
   }
