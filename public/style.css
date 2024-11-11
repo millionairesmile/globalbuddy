@@ -271,9 +271,9 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 5px;
   margin-top: 20px;
-  padding-bottom: 20px; /* 갤러리와 아래 버튼 간의 간격 */
+  padding-bottom: 10px; /* 갤러리와 아래 버튼 간의 간격 */
 }
 
 .image-container {
