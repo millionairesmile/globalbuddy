@@ -445,7 +445,9 @@ h2 {
 /* 기존의 반응형 디자인 설정 개선 */
 @media (max-width: 768px) {
   .container {
-    padding: 15px; /* 모바일에서 여백을 조금 더 줄여줌 */
+    padding: 10px; /* 모바일에서 여백을 조금 더 줄임 */
+    width: 100%; /* 모바일에서 컨테이너를 화면 전체에 맞춤 */
+    max-width: 95vw; /* 여백을 최소화하여 화면 폭에 가깝게 조정 */
   }
 
   .input-area {
@@ -491,8 +493,12 @@ h2 {
   }
 
   .image-gallery {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 5px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    display: flex; /* Flexbox로 가로 정렬 */
+    flex-wrap: nowrap; /* 이미지들이 한 줄에 가로로 정렬되도록 설정 */
+    overflow-x: auto; /* 가로 스크롤 허용 */
+    -webkit-overflow-scrolling: touch; /* 모바일에서 부드러운 스크롤 적용 */
   }
 }
 
