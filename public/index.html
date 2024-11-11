@@ -6,7 +6,6 @@
     <title>Menu Collection</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -57,7 +56,10 @@
       <!-- Collected Menu List Section -->
       <div class="menu-list">
         <h2 class="centered">Collected Menu</h2>
-        <ul id="menuItems"></ul>
+        <div class="menu-pages-container">
+          <div id="menuPages" class="menu-pages"></div>
+          <div class="pagination-dots"></div>
+        </div>
       </div>
 
       <!-- Clear List and Password Input -->

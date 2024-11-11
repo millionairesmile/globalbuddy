@@ -442,14 +442,15 @@ h2 {
   box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
 }
 
-/* 반응형 디자인 */
+/* 기존의 반응형 디자인 설정 개선 */
 @media (max-width: 768px) {
   .container {
-    padding: 20px;
+    padding: 15px; /* 모바일에서 여백을 조금 더 줄여줌 */
   }
 
   .input-area {
     flex-direction: column;
+    gap: 10px;
   }
 
   .input-area input,
@@ -462,11 +463,49 @@ h2 {
   }
 
   h2 {
-    font-size: 1.5em;
+    font-size: 1.4em;
+    margin: 20px 0 10px;
+  }
+
+  /* 갤러리 이미지가 모바일 환경에 더 잘 맞도록 설정 */
+  .image-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  /* 전체 화면 이미지 보기 버튼 크기 조정 */
+  .back-button {
+    top: 10px;
+    left: 10px;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+}
+
+/* 태블릿 환경 대응 */
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px;
+    max-width: 90%; /* 컨테이너 폭을 더 넓게 잡아 줌 */
   }
 
   .image-gallery {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* 데스크탑에서도 큰 화면에 대응 */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1000px;
+    padding: 40px;
+  }
+
+  .image-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
   }
 }
 
@@ -548,17 +587,77 @@ input:-webkit-autofill {
   }
 }
 
-/* 모바일 대응을 위한 미디어 쿼리 */
-@media (max-width: 768px) {
-  .back-button {
-    top: 10px;
-    left: 10px;
-    width: 35px;
-    height: 35px;
-    font-size: 20px;
-  }
+/* 새로운 페이지네이션 스타일 */
+.menu-pages-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
+.menu-pages {
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.menu-page {
+  flex: 0 0 100%;
+  padding: 15px;
+}
+
+.menu-page li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  animation: slideIn 0.3s ease;
+}
+
+.pagination-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background-color: #3498db;
+}
+
+/* Touch 이벤트를 위한 스타일 */
+.menu-pages {
+  touch-action: pan-x;
+  user-select: none;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .menu-page {
+    padding: 10px;
+  }
+
+  .menu-page li {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+}
 .centered {
   text-align: center;
   /* Center aligns the text */

@@ -36,6 +36,131 @@ const storage = getStorage(app);
 const menusRef = dbRef(db, "menus");
 const imagesRef = dbRef(db, "images");
 
+let currentPage = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
+// 메뉴 표시 함수 수정
+function displayMenus(snapshot) {
+  const menuPages = document.getElementById("menuPages");
+  const paginationDots = document.querySelector(".pagination-dots");
+  menuPages.innerHTML = "";
+  paginationDots.innerHTML = "";
+
+  const menus = [];
+  snapshot.forEach((childSnapshot) => {
+    const key = childSnapshot.key;
+    const data = childSnapshot.val();
+    menus.push({ key, ...data });
+  });
+
+  const pages = Math.ceil(menus.length / 10);
+
+  // 페이지별로 메뉴 생성
+  for (let i = 0; i < pages; i++) {
+    const pageDiv = document.createElement("div");
+    pageDiv.className = "menu-page";
+    const start = i * 10;
+    const pageMenus = menus.slice(start, start + 10);
+
+    const ul = document.createElement("ul");
+    pageMenus.forEach((menu, index) => {
+      const li = document.createElement("li");
+      li.dataset.key = menu.key;
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = `${start + index + 1}. ${menu.name}: ${menu.menu}`;
+      li.appendChild(textSpan);
+
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.className = "delete-button";
+      deleteButton.onclick = () => deleteMenu(menu.key);
+      li.appendChild(deleteButton);
+
+      ul.appendChild(li);
+    });
+
+    pageDiv.appendChild(ul);
+    menuPages.appendChild(pageDiv);
+
+    // 페이지네이션 점 추가
+    const dot = document.createElement("div");
+    dot.className = `dot ${i === 0 ? "active" : ""}`;
+    dot.onclick = () => goToPage(i);
+    paginationDots.appendChild(dot);
+  }
+
+  updatePagePosition();
+}
+
+// 페이지 이동 함수
+function goToPage(pageNumber) {
+  currentPage = pageNumber;
+  updatePagePosition();
+}
+
+// 페이지 위치 업데이트
+function updatePagePosition() {
+  const menuPages = document.getElementById("menuPages");
+  const dots = document.querySelectorAll(".dot");
+
+  menuPages.style.transform = `translateX(-${currentPage * 100}%)`;
+
+  dots.forEach((dot, index) => {
+    dot.classList.toggle("active", index === currentPage);
+  });
+}
+
+// 터치 이벤트 핸들러
+document.addEventListener("DOMContentLoaded", () => {
+  const menuPages = document.getElementById("menuPages");
+
+  menuPages.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
+
+  menuPages.addEventListener("touchmove", (e) => {
+    const currentX = e.touches[0].clientX;
+    const diff = touchStartX - currentX;
+
+    // 현재 페이지에서의 이동을 제한
+    const maxPages = document.querySelectorAll(".menu-page").length - 1;
+    if (
+      (currentPage === 0 && diff < 0) ||
+      (currentPage === maxPages && diff > 0)
+    ) {
+      return;
+    }
+
+    menuPages.style.transform = `translateX(calc(-${
+      currentPage * 100
+    }% - ${diff}px))`;
+  });
+
+  menuPages.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > 50) {
+      // 50px 이상 스와이프했을 때만 페이지 전환
+      const maxPages = document.querySelectorAll(".menu-page").length - 1;
+      if (diff > 0 && currentPage < maxPages) {
+        currentPage++;
+      } else if (diff < 0 && currentPage > 0) {
+        currentPage--;
+      }
+    }
+
+    updatePagePosition();
+  });
+
+  // Firebase 실시간 데이터베이스 리스너 설정
+  onValue(menusRef, (snapshot) => {
+    displayMenus(snapshot);
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   const addButton = document.querySelector("#addButton");
   addButton.addEventListener("click", addMenu);
