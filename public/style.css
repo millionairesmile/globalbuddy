@@ -492,6 +492,15 @@ h2 {
   }
 }
 
+/* 전체 화면 이미지 보기 버튼 크기 조정 */
+.back-button {
+  top: 10px;
+  left: 10px;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+}
+
 /* 태블릿 환경 대응 */
 @media (max-width: 1024px) {
   .container {
