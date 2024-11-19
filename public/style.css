@@ -8,13 +8,6 @@
   transition: all 0.3s ease;
 }
 
-html,
-body {
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden; /* 수평 스크롤 방지 */
-}
-
 /* body의 폰트를 Poppins로 변경 */
 body {
   font-family: "Sour Gummy", sans-serif;
