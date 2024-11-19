@@ -406,6 +406,7 @@ h2 {
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease;
+  padding: 40px; /* 전체적인 패딩 추가 */
 }
 
 @keyframes fadeIn {
@@ -419,10 +420,11 @@ h2 {
 }
 
 .fullscreen-image img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 80%; /* 90%에서 80%로 감소 */
+  max-height: 80%; /* 90%에서 80%로 감소 */
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  object-fit: contain; /* 이미지 비율 유지 */
 }
 
 /* 초기화 섹션 스타일링 */
@@ -506,20 +508,25 @@ h2 {
 
 /* 전체 화면 이미지 보기 버튼 크기 조정 */
 .back-button {
-  top: 10px;
-  left: 10px;
-  width: 35px;
-  height: 35px;
-  font-size: 20px;
-}
-
-/* 전체 화면 이미지 보기 버튼 크기 조정 */
-.back-button {
-  top: 10px;
-  left: 10px;
-  width: 35px;
-  height: 35px;
-  font-size: 20px;
+  position: absolute;
+  top: 30px; /* 20px에서 30px로 증가 */
+  right: 30px; /* left에서 right로 변경하고 30px로 설정 */
+  left: auto; /* left 속성 제거 */
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1001;
+  padding: 0;
+  line-height: 1;
 }
 
 /* 태블릿 환경 대응 */
@@ -699,6 +706,23 @@ input:-webkit-autofill {
   .dot {
     width: 6px;
     height: 6px;
+  }
+
+  .fullscreen-image {
+    padding: 20px;
+  }
+
+  .fullscreen-image img {
+    max-width: 85%;
+    max-height: 85%;
+  }
+
+  .back-button {
+    top: 20px;
+    right: 20px;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
   }
 }
 .centered {
