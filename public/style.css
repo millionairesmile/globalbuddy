@@ -2,8 +2,8 @@
 
 /* 기본 스타일 및 리셋 */
 * {
-  margin: 10;
-  padding: 10;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
