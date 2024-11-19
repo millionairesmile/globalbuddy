@@ -621,8 +621,8 @@ input:-webkit-autofill {
 
 /* 기존 fullscreen-image img 스타일은 유지 */
 .fullscreen-image img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 80%;
+  max-height: 80%;
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
